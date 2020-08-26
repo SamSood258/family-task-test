@@ -1,6 +1,5 @@
 
 @namespace FamilyTask.Components
-
 <style>
     .task-wrapper .task-item {
         background: #FFFFFF;
@@ -10,26 +9,32 @@
         font-size: 24px;
         font-family: "Poppins Light";
     }
+
     .done-text {
         text-decoration: line-through;
     }
+
     .task-wrapper .avtar {
         width: 32px;
         height: 32px;
         border-radius: 50%;
     }
-    @@media(max-width: 1400px) { 
-        .task-wrapper .task-item { 
+
+    @@media(max-width: 1400px) {
+        .task-wrapper .task-item {
             font-size: 16px;
         }
+
         .task-wrapper .avtar {
             width: 24px;
             height: 24px;
         }
+
         .delete-icon {
             width: 25px;
         }
     }
+
     @@media(max-width: 767.98px) {
         .task-wrapper .avtar {
             width: 16px;
@@ -41,22 +46,26 @@
 <div class="task-wrapper">
     @foreach (var item in Tasks)
     {
-        <div class="task-item p-3 my-3 row m-0">
-            <div class="col-10 p-0">
-                <Check TValue="bool" Checked="@item.isDone" CheckedChanged="@(val => item.isDone = val)">
-                    <span class="@(item.isDone ? "done-text" : "")">@item.text</span>
-                </Check>
-            </div>
-            <div class="col-2 p-0 d-flex justify-content-end align-items-center">
-                @if (item.member != null) {
-                    <div class="avtar mr-1" style="background-color: @item.member.avtar;"></div>
-                }
-                <img class="delete-icon" src="/assets/images/delete-icon.svg"/>
-            </div>
-        </div>
-    }
+<div draggable="true" @ondragstart="(e=>  e.DataTransfer.Items = new DataTransferItem[1] { new DataTransferItem { Kind = item.id.ToString() } })" id="@item.id" class="task-item p-3 my-3 row m-0">
+    <div class="col-10 p-0">
+        <Check TValue="bool" Checked="@item.isDone" Disabled="@item.isDone" @onchange="@(e => onCheckClick(item))">
+            <span class="@(item.isDone ? "done-text" : "")">@item.text</span>
+        </Check>
+    </div>
+    <div class="col-2 p-0 d-flex justify-content-end align-items-center">
+        @if (item.member != null)
+        {
+<div class="avtar mr-1" style="background-color: @item.member.avtar;"></div>                }
+        <img class="delete-icon" src="/assets/images/delete-icon.svg" />
+    </div>
+</div>}
 </div>
 
-@code  {
-    [Parameter] public TaskModel[] Tasks { get; set; }
-}
+@code  { [Parameter] public List<TaskModel> Tasks { get; set; }
+            [Parameter] public EventCallback<TaskModel> onDoneCallBack { get; set; }
+
+            private async void onCheckClick(TaskModel task)
+            {
+                task.isDone = true;
+                await onDoneCallBack.InvokeAsync(task);
+            } }

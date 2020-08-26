@@ -3,6 +3,7 @@ using System;
 public class MenuItem
 {
     public bool isActive {get; set;}
+    public bool isDropzone { get; set; }
     public string iconColor { get; set; }
     public string label { get; set; }
     public Guid referenceId { get; set; }

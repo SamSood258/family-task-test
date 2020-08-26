@@ -1,0 +1,19 @@
+﻿@namespace FamilyTask.Components
+
+
+<div class="row m-0">
+    <Field class="col-9 p-0 custom-input">
+        <TextEdit @bind-Text="@task.text" Placeholder="Enter New Task" />
+    </Field>
+    <div class="col-3 p-0 text-right">
+        <Button class="add-btn px-4" @onclick="@onAddClick">Add</Button>
+    </div>
+</div>
+
+@code { [Parameter] public EventCallback<TaskModel> onAddCallback { get; set; }
+    private TaskModel task = new TaskModel();
+
+    private async void onAddClick()
+    {
+        await onAddCallback.InvokeAsync(task);
+    } }
